@@ -11,19 +11,20 @@ test.describe('Uchi.ru widget ', () => {
     await page.goto('/');
 
     // close cookies popup
-    await page.click('._UCHI_COOKIE__button');
+    await page.locator('._UCHI_COOKIE__button:visible').click();
   });
 
-  test('opens', async ({page}) => {
+  test('widget body is visible after opening', async ({page}) => {
     await widgetPage.openWidget();
 
-    await expect(widgetPage.getWidgetBody()).toBeVisible()
+    await expect(widgetPage.getWidgetBody()).toBeVisible();
   });
 
-  test('has correct title', async ({ page }) => {
+  test('opens feedback form from popular article', async ({ page }) => {
     await widgetPage.openWidget();
 
     const articles = await widgetPage.getPopularArticles();
+    expect(articles.length).toBeGreaterThan(0);
 
     await articles[0].click();
 
