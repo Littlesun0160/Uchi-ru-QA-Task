@@ -10,6 +10,11 @@ enum WidgetPageSelectors {
     ARTICLE_POPULAR_TITLE = '[class^=popularTitle__]',
     ARTICLE_POPULAR_LIST = `${ARTICLE_POPULAR_TITLE} + ul[class^=articles__]`,
     ARTICLE_POPULAR_LIST_ITEM = `${ARTICLE_POPULAR_LIST} > li`,
+    SEARCH_INPUT = '[class^=cinput-text-input__]',
+    SEARCH_RESULTS_TITLE = '[class^=found__]',
+    SEARCH_RESULTS_LIST = `${SEARCH_RESULTS_TITLE} > ul[class^=articles__]`,
+    SEARCH_RESULTS_LIST_ITEM = `${SEARCH_RESULTS_LIST} > li`,
+    ARTICLE_TITLE_TEXT = '[class^=title__]',
 }
 
 export class WidgetPage {
@@ -25,10 +30,24 @@ export class WidgetPage {
         await this.wrapper().locator(WidgetPage.selector.BUTTON_OPEN_WIDGET).click();
     }
 
+    async openArticleBySearchName(articleName: string) {
+        await this.wrapper().locator(WidgetPage.selector.SEARCH_RESULTS_LIST_ITEM).filter({hasText: articleName}).click();
+    }
+
     async getPopularArticles() {
         const articles = this.wrapper().locator(WidgetPage.selector.ARTICLE_POPULAR_LIST_ITEM);
         await expect(articles.first()).toBeVisible(); //Проверяем, что статьи отображаются
         return await articles.all();
+    }
+
+    async searchArticleByName(articleName: string) {
+        await this.wrapper().locator(WidgetPage.selector.SEARCH_INPUT).fill(articleName);
+    }
+
+    async getSearchResultsNames() {
+        const articles = this.wrapper().locator(WidgetPage.selector.SEARCH_RESULTS_LIST_ITEM);
+        await expect(articles.first()).toBeVisible();
+        return await articles.allTextContents();
     }
 
     async clickWriteToUs() {
@@ -37,6 +56,10 @@ export class WidgetPage {
 
     async getTitle() {
         return await this.wrapper().locator(WidgetPage.selector.HEADER_TEXT).textContent();
+    }
+
+    async getArticleTitle() {
+        return await this.wrapper().locator(WidgetPage.selector.ARTICLE_TITLE_TEXT).textContent();
     }
 
     getWidgetBody() {
